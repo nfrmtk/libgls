@@ -1,12 +1,12 @@
 # gls api wrapper
 
-## install
+## build
 ```shell
 mkdir -p build
 cd build 
 cmake .. 
 cmake --build . # to build everything we got
-cmake --build . --target=test # to build test.cpp without play.cpp
+cmake --build . --target=play # to build play.cpp
 ```
 
 ## run tests
