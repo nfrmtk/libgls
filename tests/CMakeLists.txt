@@ -7,7 +7,9 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 enable_testing()
-add_executable(test test.cpp)
+file(GLOB_RECURSE SOURCES ./*cpp)
+
+add_executable(test ${SOURCES})
 add_test(NAME test COMMAND test)
 
 target_link_libraries(test GTest::gtest_main libgls)
