@@ -1,4 +1,4 @@
-
+FMT ?= clang-format
 
 build:
 	mkdir -p build
@@ -11,3 +11,9 @@ tests: build
 clean:
 	rm -rf build
 	rm -rf cmake-*
+
+
+.PHONY: format
+format:
+	@find lib -name '*pp' -type f | xargs $(FMT) -i
+	@find tests -name '*pp' -type f | xargs $(FMT) -i
