@@ -6,7 +6,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
-
+enable_testing()
 add_executable(test test.cpp)
+add_test(NAME test COMMAND test)
+
 target_link_libraries(test GTest::gtest_main libgls)
 gtest_discover_tests(test)
