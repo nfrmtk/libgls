@@ -1,0 +1,15 @@
+name: tests-release
+on:
+  push:
+    branches:
+      - feature/*
+      - master
+jobs:
+  run-tests:
+    runs-on:
+      ubuntu-latest
+    steps:
+      - run: echo "starting to build project!"
+      - run: make build
+      - run: echo "running tests."
+      - run: make tests
