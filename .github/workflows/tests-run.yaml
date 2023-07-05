@@ -15,7 +15,5 @@ jobs:
       - run: |
           sudo apt update 
           sudo apt-get install -y cmake g++
-      - run: echo "starting to build project!"
-      - run: make build
       - run: echo "running tests."
       - run: make tests
