@@ -9,6 +9,12 @@ jobs:
     runs-on:
       ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+            submodules: true
+      - run: |
+          sudo apt update 
+          sudo apt-get install -y cmake g++
       - run: echo "starting to build project!"
       - run: make build
       - run: echo "running tests."
