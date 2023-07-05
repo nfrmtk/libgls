@@ -19,12 +19,11 @@ struct TCalculation {
     kQueueRecalculation,
     kIrrelevant
   };
-
   CalculationStatus status;
-  DateTime updated_at;
+  std::string updated_at;
   bool favorite;
-  DateTime created_at;
-  DateTime provisional_completion_date;
+  std::string created_at;
+  std::string provisional_completion_date;
 };
 static std::unordered_map<std::string, TCalculation::CalculationStatus>
     mappings{
