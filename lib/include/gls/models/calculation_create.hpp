@@ -9,7 +9,7 @@ struct TCalculationCreate{
   std::int64_t id;
   std::int64_t project;
   TInputData input_data;
-  CalculationStatus status;
+  Status067Enum status;
   std::string callback_url;
   bool external_api;
 };
