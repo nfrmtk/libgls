@@ -9,4 +9,4 @@ struct TPalletReport {
   std::string uid;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TPalletReport, uid, title)
-}
+}  // namespace gls

@@ -32,4 +32,4 @@ NLOHMANN_JSON_SERIALIZE_ENUM(
      {Status067Enum::kCancel, "cancel"},
      {Status067Enum::kQueueRecalculation, "queue_recalculation"},
      {Status067Enum::kIrrelevant, "irrelevant"}})
-}
+}  // namespace gls

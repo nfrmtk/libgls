@@ -1,8 +1,8 @@
 #pragma once
 #include <chrono>
+#include <gls/models/status_067.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <gls/models/status_067.hpp>
 namespace gls {
 struct TCalculation {
   std::int64_t id;
