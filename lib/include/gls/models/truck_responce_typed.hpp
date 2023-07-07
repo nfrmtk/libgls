@@ -1,8 +1,9 @@
 #pragma once
-#include <nlohmann/json.hpp>
-#include <string>
+#include <cstdint>
 #include <gls/models/axes.hpp>
 #include <gls/models/tractor.hpp>
+#include <nlohmann/json.hpp>
+#include <string>
 #include <vector>
 
 namespace gls
