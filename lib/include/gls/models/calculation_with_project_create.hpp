@@ -12,10 +12,10 @@ struct TCalculationWithProjectCreate {
   std::int64_t id;
   std::int64_t project;
   TInputData input_data;
-  Status067 status;
+  Status067  status;
   std::string callback_url;
   bool external_api;
-  std::vector<FileTypeEnum> type_report;
+  std::vector<FileType> type_report;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCalculationWithProjectCreate, id, project,
                                    input_data, status, callback_url,
