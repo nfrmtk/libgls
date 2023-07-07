@@ -3,7 +3,7 @@
 #include <nlohmann/json.hpp>
 namespace gls {
 
-enum class RoleType : std:int8_t  {
+enum class RoleType : std::int8_t  {
   kInvalid = -1,
   kPartner,
   kUser
