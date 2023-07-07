@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
+#include <gls/models/axes.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <gls/models/axes.hpp>
 
 namespace gls {
 struct TVanResponse {
@@ -31,14 +31,11 @@ struct TVanResponse {
   std::vector<TAxes> axles;
   std::int64_t full_length;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TVanResponse, id, title,
-                                   mass, carrying_capacity, width, height,
-                                   length, loading_width, loading_height,
-                                   loading_length, indentation_width,
-                                   indentation_width_right, indentation_height,
-                                   indentation_height_top, indentation_length,
-                                   indentation_length_end, created_at,
-                                   updated_at, demo, user, type, uid, axles,
-                                   full_length)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+    TVanResponse, id, title, mass, carrying_capacity, width, height, length,
+    loading_width, loading_height, loading_length, indentation_width,
+    indentation_width_right, indentation_height, indentation_height_top,
+    indentation_length, indentation_length_end, created_at, updated_at, demo,
+    user, type, uid, axles, full_length)
 
-}
+}  // namespace gls

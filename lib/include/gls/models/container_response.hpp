@@ -1,21 +1,20 @@
 #pragma once
 #include <cstdint>
-#include <gls/models/axes.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "cargo_space_list_enum.hpp"
 namespace gls {
-struct TVanGet {
+struct TContainerResponse {
   std::int64_t id;
   std::string title;
-  std::int64_t mass;
-  std::int64_t carrying_capacity;
+  double mass;
+  double carrying_capacity;
+  std::int64_t length;
   std::int64_t width;
   std::int64_t height;
-  std::int64_t length;
   std::int64_t loading_width;
   std::int64_t loading_height;
-  std::int64_t loading_length;
   std::int64_t indentation_width;
   std::int64_t indentation_width_right;
   std::int64_t indentation_height;
@@ -26,16 +25,15 @@ struct TVanGet {
   std::string updated_at;
   bool demo;
   std::int64_t user;
-  std::vector<TAxes> axles;
-  std::int64_t full_length;
+  std::string type;
+  std::string uid;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TVanGet, id, title, mass, carrying_capacity,
-                                   width, height, length, loading_width,
-                                   loading_height, loading_length,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TContainerResponse, id, title, length, width,
+                                   height, mass, carrying_capacity,
+                                   loading_width, loading_height,
                                    indentation_width, indentation_width_right,
                                    indentation_height, indentation_height_top,
                                    indentation_length, indentation_length_end,
-                                   created_at, updated_at, demo, user, axles,
-                                   full_length)
-
+                                   created_at, updated_at, demo, user, type,
+                                   uid)
 }  // namespace gls

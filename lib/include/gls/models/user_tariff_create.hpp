@@ -9,4 +9,4 @@ struct TUserTariffCreate {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TUserTariffCreate, tariff, is_hold)
 
-}
+}  // namespace gls
