@@ -3,7 +3,7 @@
 #include <nlohmann/json.hpp>
 namespace gls {
 
-enum class Status067Enum : std::int8_t {
+enum class Status067 : std::int8_t {
   kInvalid = -1,
   kNew,
   kInQueue,
@@ -18,18 +18,18 @@ enum class Status067Enum : std::int8_t {
   kIrrelevant
 };
 NLOHMANN_JSON_SERIALIZE_ENUM(
-    Status067Enum,
-    {{Status067Enum::kInvalid,
+    Status067,
+    {{Status067::kInvalid,
       nullptr},  // must always be the first, see realisation and link in chat!
-     {Status067Enum::kNew, "new"},
-     {Status067Enum::kInQueue, "in_queue"},
-     {Status067Enum::kCalculating, "calculating"},
-     {Status067Enum::kSuccess, "success"},
-     {Status067Enum::kError, "error"},
-     {Status067Enum::kDesigned, "calculating"},
-     {Status067Enum::kForRecalculation, "for_recalculation"},
-     {Status067Enum::kRecalculation, "recalculation"},
-     {Status067Enum::kCancel, "cancel"},
-     {Status067Enum::kQueueRecalculation, "queue_recalculation"},
-     {Status067Enum::kIrrelevant, "irrelevant"}})
+     {Status067::kNew, "new"},
+     {Status067::kInQueue, "in_queue"},
+     {Status067::kCalculating, "calculating"},
+     {Status067::kSuccess, "success"},
+     {Status067::kError, "error"},
+     {Status067::kDesigned, "calculating"},
+     {Status067::kForRecalculation, "for_recalculation"},
+     {Status067::kRecalculation, "recalculation"},
+     {Status067::kCancel, "cancel"},
+     {Status067::kQueueRecalculation, "queue_recalculation"},
+     {Status067::kIrrelevant, "irrelevant"}})
 }  // namespace gls

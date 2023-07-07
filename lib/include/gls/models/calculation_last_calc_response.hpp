@@ -6,7 +6,7 @@
 namespace gls {
 struct TCalculationLastCalcResponse {
   std::int64_t id;
-  Status067Enum status;
+  Status067 status;
   std::string start_time;
   std::string provisional_completion_date;
 };

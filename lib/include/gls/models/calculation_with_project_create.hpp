@@ -12,7 +12,7 @@ struct TCalculationWithProjectCreate {
   std::int64_t id;
   std::int64_t project;
   TInputData input_data;
-  Status067Enum status;
+  Status067 status;
   std::string callback_url;
   bool external_api;
   std::vector<FileTypeEnum> type_report;

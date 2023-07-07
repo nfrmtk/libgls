@@ -10,7 +10,7 @@ struct TCalculation {
   std::string updated_at;
   std::string created_at;
   std::string provisional_completion_date;
-  Status067Enum status;
+  Status067 status;
   bool is_recalculate;
   bool favorite;
 };

@@ -5,7 +5,7 @@
 #include <string>
 namespace gls {
 struct TCalculationReportList {
-  FileTypeEnum status;
+  FileType status;
   std::string uid;
   std::string callback_url;
 };

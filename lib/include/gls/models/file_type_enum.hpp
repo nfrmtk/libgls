@@ -3,11 +3,11 @@
 #include <nlohmann/json.hpp>
 
 namespace gls {
-enum class FileTypeEnum { kInvalid = -1, kExcel, kPdf };
-NLOHMANN_JSON_SERIALIZE_ENUM(FileTypeEnum,
+enum class FileType { kInvalid = -1, kExcel, kPdf };
+NLOHMANN_JSON_SERIALIZE_ENUM(FileType,
                              {
-                                 {FileTypeEnum::kInvalid, nullptr},
-                                 {FileTypeEnum::kExcel, "excel"},
-                                 {FileTypeEnum::kPdf, "pdf"},
+                                 {FileType::kInvalid, nullptr},
+                                 {FileType::kExcel, "excel"},
+                                 {FileType::kPdf, "pdf"},
                              })
 }  // namespace gls
