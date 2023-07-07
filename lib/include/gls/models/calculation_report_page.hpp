@@ -5,8 +5,8 @@
 
 #include "cargo_space_report_info.hpp"
 namespace gls {
-struct TCalculationReportList {
+struct TCalculationReportPage {
   std::vector<TCargoSpaceReportInfo> cargo_spaces;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCalculationReportList, cargo_spaces)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCalculationReportPage, cargo_spaces)
 }  // namespace gls

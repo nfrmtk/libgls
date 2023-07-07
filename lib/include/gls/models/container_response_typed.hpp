@@ -5,7 +5,7 @@
 
 #include "cargo_space_list_enum.hpp"
 namespace gls {
-struct TContainerResponse {
+struct TContainerResponseTyped {
   std::string type;
   std::int64_t id;
   std::string title;
@@ -29,12 +29,12 @@ struct TContainerResponse {
   std::string type;
   std::string uid;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TContainerResponse, type, id, title, length,
-                                   width, height, mass, carrying_capacity,
-                                   loading_width, loading_height,
-                                   indentation_width, indentation_width_right,
-                                   indentation_height, indentation_height_top,
-                                   indentation_length, indentation_length_end,
-                                   created_at, updated_at, demo, user, type,
-                                   uid)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TContainerResponseTyped, type, id, title,
+                                   length, width, height, mass,
+                                   carrying_capacity, loading_width,
+                                   loading_height, indentation_width,
+                                   indentation_width_right, indentation_height,
+                                   indentation_height_top, indentation_length,
+                                   indentation_length_end, created_at,
+                                   updated_at, demo, user, type, uid)
 }  // namespace gls
