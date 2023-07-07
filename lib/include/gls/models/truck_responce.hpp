@@ -1,15 +1,13 @@
 #pragma once
 #include <nlohmann/json.hpp>
 #include <string>
-#include <gls/models/axes.hpp>
 #include <gls/models/tractor.hpp>
-#include <vector>
+#include <gls/models/axes.hpp>
 
 namespace gls
 {
-    struct TTruckResponceTyped
+    struct TTruckResponce
     {
-        std::string resourcetype;
         int64_t id;
         std::string title;
         int64_t mass;
@@ -39,8 +37,7 @@ namespace gls
         TTractor tractor;
     };
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
-            TTruckResponceTyped,
-            resourcetype,
+            TTruckResponce,
             id,
             title,
             mass,
@@ -68,5 +65,5 @@ namespace gls
             hitch_max_load,
             hitch_distance,
             tractor
-            )
+    )
 }
