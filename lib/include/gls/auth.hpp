@@ -7,8 +7,7 @@
 namespace gls {
 class Auth {
   TAuthToken email_password;
-  std::optional<TTokens> required_to_work;
-  cpr::Session session;
+  std::optional<TTokens> credentials;
   static void check_if_failed(const cpr::Response& response) {
     if (response.status_code != 200) {
       throw std::runtime_error("request failure. Api responded with: " +
@@ -17,64 +16,62 @@ class Auth {
                                to_string(nlohmann::json::parse(response.text)));
     }
   }
+  static cpr::Header headers;
+  std::string base_url;
 
  public:
-  std::string base_url;
-  std::string content_type;
   Auth() = delete;
   explicit Auth(TAuthToken token,
                 std::string base_url = "https://back.glsystem.net/api/v1/")
       : email_password(std::move(token)),
-        required_to_work(std::nullopt),
-        session(),
-        base_url(std::move(base_url)),
-        content_type("application/json") {
+        credentials(std::nullopt),
+        base_url(std::move(base_url)) {
     Login();
   }
   Auth& Login() {
-    session.UpdateHeader({{"Content-Type", content_type}});
-    session.SetUrl(cpr::Url{base_url + "auth/login/"});
     auto body = to_string(nlohmann::json(email_password));
-    session.SetBody(cpr::Body{std::move(body)});
-    auto response = session.Post();
+
+    auto response = cpr::Post(cpr::Url{this->base_url + "auth/login/"},
+                              cpr::Body{std::move(body)}, headers);
     check_if_failed(response);
-    auto credentials = nlohmann::json::parse(response.text);
-    required_to_work = std::make_optional(credentials.get<TTokens>());
-    session.SetBearer(required_to_work->access_token);
+    credentials = nlohmann::json::parse(response.text).get<TTokens>();
     return *this;
   }
   Auth& Logout() {
-    if (!required_to_work.has_value() ||
-        required_to_work->access_token_expires !=
+    if (!credentials.has_value() ||
+        credentials->access_token_expires !=
             0) {  // todo: properly handle case when access_token_expires != 0
       return *this;
     }
-    session.SetUrl(cpr::Url{base_url + "auth/logout/"});
-    auto response = session.Post();
-    required_to_work = std::nullopt;
+    auto response = cpr::Post(cpr::Url{base_url + "auth/logout/"}, headers,
+                              cpr::Bearer(credentials->access_token));
+    credentials = std::nullopt;
     return *this;
   }
 
-  const std::optional<TTokens>& GetCredentials() const noexcept {
-    return required_to_work;
+  [[nodiscard]] const std::optional<TTokens>& GetCredentials() const noexcept {
+    return credentials;
   }
-  Auth& ConfigureSession(
-      const std::function<void(cpr::Session&)>& configurator) {
-    configurator(session);
-    return *this;
-  }
-  Auth& Relogin(){
-    if (!required_to_work.has_value()) {
+  Auth& Refresh() {
+    if (!credentials.has_value()) {
       throw std::logic_error("please login first");
     }
-    session.SetUrl(cpr::Url{base_url + "auth/relogin/"});
-    auto response = session.Post();
+    nlohmann::json body = nlohmann::json::object();
+    body["refresh_token"] = credentials->refresh_token;
+
+    auto response = cpr::Post(cpr::Url{base_url + "auth/refresh/"},
+                              cpr::Bearer{credentials->access_token},
+                              cpr::Header{headers},
+                              cpr::Body{to_string(body)});
     check_if_failed(response);
     auto j = nlohmann::json::parse(std::move(response.text));
-    auto [access_token, access_token_expires, result] = j.get<std::tuple<std::string, std::int64_t, bool>>();
-    required_to_work->access_token_expires = access_token_expires;
-    required_to_work->access_token = access_token;
+    if (!j["result"].get<bool>()) return *this;
+    credentials->access_token_expires = j["access_token_expires"].get<std::int64_t>();
+    credentials->access_token = j["access_token"].get<std::string>();
+    return *this;
   }
   ~Auth() { Logout(); }
 };
+
+cpr::Header Auth::headers = {{"Content-Type", "application/json"}};
 }  // namespace gls
