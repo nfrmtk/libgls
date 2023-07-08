@@ -1,25 +1,13 @@
-#include <cpr/cpr.h>
-
-#include <gls/auth.hpp>
 #include <iostream>
+#include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
 int main() {
-  gls::TAuthToken email_password = {std::getenv("EMAIL"),
-                                    std::getenv("PASSWORD")};
-  auto body = to_string(nlohmann::json(std::move(email_password)));
-  std::cout << body << " is the bosy of today show\n";
-  auto credentials = cpr::Post(
-      cpr::Url{"https://back.glsystem.net/api/v1/auth/login/"}, cpr::Body{body},
-      cpr::Header{
-          {"Content-Type", "application/json"},
-          //                  {"X-CSRFTOKEN",
-          //                   "x4kqoi5Zw8vKofN2CdcsztHBlKJxEMaps60yZsfXnh9mnLEO96srRNS3kDV"
-          //                   "JVDfZ"}
-      });
-  std::cout << credentials.status_code
-            << '\n';  // application/json; charset=utf-8
-  std::cout << nlohmann::json::parse(credentials.text);  // JSON text string
-  //  auto email = std::getenv("EMAIL");
-  //  std::cout << (email ? email: "sad");
-  return 0;
+    cpr::Response r = cpr::Get(cpr::Url{"https://api.github.com/repos/whoshuu/cpr/contributors"},
+                               cpr::Authentication{"user", "pass", cpr::AuthMode::BASIC},
+                               cpr::Parameters{{"anon", "true"}, {"key", "value"}});
+    r.status_code;                  // 200
+    r.header["content-type"];       // application/json; charset=utf-8
+    std::cout << nlohmann::json::parse(r.text);                         // JSON text string
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
 }
