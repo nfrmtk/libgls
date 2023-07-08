@@ -1,5 +1,5 @@
 # gls api wrapper
-
+libgls - простой и удобный sdk для взаимодействия c [Garpix Load System](https://glsystem.net/dokumentaciya-k-api). В данный момент находится в активной разработке.
 ## build
 ```shell
 mkdir -p build
