@@ -17,3 +17,4 @@ clean:
 format:
 	@find lib -name '*pp' -type f | xargs $(FMT) -i
 	@find tests -name '*pp' -type f | xargs $(FMT) -i
+	@echo "play.cpp" | xargs $(FMT) -i
