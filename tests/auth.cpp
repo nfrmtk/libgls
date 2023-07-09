@@ -40,3 +40,9 @@ TEST_F(AuthFixture, refresh) {
   ASSERT_EQ(credentials_saved.refresh_token,
             auth_.GetCredentials()->refresh_token);
 }
+
+TEST_F(AuthFixture, logout){
+  ASSERT_NO_THROW(auth_.Refresh());
+  auth_.Logout();
+  ASSERT_THROW(auth_.Refresh(), std::logic_error);
+}
