@@ -1,3 +1,4 @@
+#pragma once
 #include <cpr/cpr.h>
 
 #include <gls/models/auth_token.hpp>
@@ -5,11 +6,12 @@
 #include <nlohmann/json.hpp>
 #include <utility>
 namespace gls {
+void check_if_failed(const cpr::Response& response);
+static cpr::Header headers = {{"Content-Type", "application/json"}};
+
 class Auth {
   TAuthToken email_password;
   std::optional<TTokens> credentials;
-  static void check_if_failed(const cpr::Response& response);
-  static cpr::Header headers;
   std::string base_url;
 
  public:
@@ -26,6 +28,9 @@ class Auth {
 
   [[nodiscard]] const std::optional<TTokens>& GetCredentials() const noexcept {
     return credentials;
+  }
+  [[nodiscard]] const std::string& GetBaseUrl() const noexcept {
+    return base_url;
   }
   Auth& Refresh();
   ~Auth() { Logout(); }

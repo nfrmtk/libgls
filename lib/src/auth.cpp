@@ -1,8 +1,7 @@
 #include <gls/auth.hpp>
 
 namespace gls {
-cpr::Header Auth::headers = {{"Content-Type", "application/json"}};
-void Auth::check_if_failed(const cpr::Response& response){
+void check_if_failed(const cpr::Response& response) {
   if (response.status_code != 200) {
     throw std::runtime_error("request failure. Api responded with: " +
                              std::to_string(response.status_code) +
@@ -31,7 +30,7 @@ Auth& Auth::Logout() {
   credentials = std::nullopt;
   return *this;
 }
-Auth& Auth::Refresh()  {
+Auth& Auth::Refresh() {
   if (!credentials.has_value()) {
     throw std::logic_error("please login first");
   }
@@ -40,13 +39,13 @@ Auth& Auth::Refresh()  {
 
   auto response = cpr::Post(cpr::Url{base_url + "auth/refresh/"},
                             cpr::Bearer{credentials->access_token},
-                            cpr::Header{headers},
-                            cpr::Body{to_string(body)});
+                            cpr::Header{headers}, cpr::Body{to_string(body)});
   check_if_failed(response);
   auto j = nlohmann::json::parse(std::move(response.text));
   if (!j["result"].get<bool>()) return *this;
-  credentials->access_token_expires = j["access_token_expires"].get<std::int64_t>();
+  credentials->access_token_expires =
+      j["access_token_expires"].get<std::int64_t>();
   credentials->access_token = j["access_token"].get<std::string>();
   return *this;
 }
-}
+}  // namespace gls
