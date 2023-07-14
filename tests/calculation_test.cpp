@@ -1,16 +1,17 @@
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <gls/models/calculation.hpp>
 
-TEST(serialize_enum, invalid) {
+TEST_CASE("serialize_enum", "[invalid]") {
   gls::Status067 state;
   nlohmann::json e = 2.718;
   state = e.get<decltype(state)>();
-  ASSERT_EQ(state, gls::Status067::kInvalid);
+  REQUIRE(state == gls::Status067::kInvalid);
 }
-TEST(serialize_enum, good) {
+TEST_CASE("serialize_enum", "[good]") {
   gls::Status067 state;
   nlohmann::json new_ = "new";
   state = new_.get<decltype(state)>();
-  ASSERT_EQ(state, gls::Status067::kNew);
+  REQUIRE(state == gls::Status067::kNew);
 }
+

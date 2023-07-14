@@ -1,5 +1,7 @@
-#include <gtest/gtest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <gls/all.hpp>
 
-TEST(example, hello) { ASSERT_TRUE(!hello().empty()); }
+TEST_CASE("hello-world test", "[string not empty]") {
+  REQUIRE(!hello().empty());
+}

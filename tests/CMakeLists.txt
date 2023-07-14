@@ -1,16 +1,18 @@
 FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.0.1 # or a later release
 )
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-include(GoogleTest)
+
+FetchContent_MakeAvailable(Catch2)
+
 enable_testing()
 file(GLOB_RECURSE SOURCES ./*cpp)
 
 add_executable(test ${SOURCES})
 add_test(NAME test COMMAND test)
 
-target_link_libraries(test GTest::gtest_main libgls)
-gtest_discover_tests(test)
+target_link_libraries(test Catch2::Catch2WithMain libgls)
+include(CTest)
+include(Catch)
+catch_discover_tests(test)
