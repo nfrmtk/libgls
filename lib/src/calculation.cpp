@@ -69,6 +69,13 @@ std::variant<models::TResponseCalculation, std::string> Calculation::Post(
                 cpr::Bearer{credentials.GetCredentials()->access_token});
   auto j = nlohmann::json::parse(response.text);
   if (j.contains("detail")) return j["detail"].get<std::string>();
-  else return j.get<models::TResponseCalculation>();
+  else {
+    try {
+      return j.get<models::TResponseCalculation>();
+    }
+    catch (const nlohmann::json::exception& ex){
+      return std::string{"bad json, explanation: "} + ex.what();
+    }
+  }
 }
 }  // namespace gls
