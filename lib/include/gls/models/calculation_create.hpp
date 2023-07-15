@@ -4,7 +4,7 @@
 #include <gls/models/status_067.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-namespace gls {
+namespace gls::models {
 struct TCalculationCreate {
   std::int64_t id;
   std::int64_t project;

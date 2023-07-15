@@ -2,7 +2,8 @@
 #include <iostream>
 namespace gls {
 std::string to_string(bool b) { return b ? "true"s : "false"s; }
-std::string to_string(gls::Status067 status) {
+std::string to_string(gls::models::Status067 status) {
+  using namespace models;
   switch (status) {
     case Status067::kIrrelevant:
       return "irrelevant"s;
@@ -31,10 +32,10 @@ std::string to_string(gls::Status067 status) {
       return "queue_recalculation"s;
   }
 }
-std::variant<TPaginatedCalculationList, std::string> Calculation::Get(
+std::variant<models::TPaginatedCalculationList, std::string> Calculation::Get(
     bool favorite, bool is_history, bool is_recalculate, std::string ordering,
     std::int64_t page, std::int64_t page_size, std::int64_t project_id,
-    gls::Status067 status) {
+    gls::models::Status067 status) {
   cpr::Parameters params{{"favorite", to_string(favorite)},
                          {"is_history", to_string(is_history)},
                          {"is_recalculate", to_string(is_recalculate)},
@@ -51,7 +52,7 @@ std::variant<TPaginatedCalculationList, std::string> Calculation::Get(
   if (j.contains("detail")) return j["detail"].get<std::string>();
   else {
     try {
-      return j.get<TPaginatedCalculationList>();
+      return j.get<models::TPaginatedCalculationList>();
     }
     catch (const nlohmann::json::exception& ex){
       return std::string{"bad json, explanation: "} + ex.what();
@@ -59,8 +60,8 @@ std::variant<TPaginatedCalculationList, std::string> Calculation::Get(
   }
 }
 
-std::variant<TResponseCalculation, std::string> Calculation::Post(
-    gls::TCalculationCreate info) {
+std::variant<models::TResponseCalculation, std::string> Calculation::Post(
+    gls::models::TCalculationCreate info) {
   auto body = nlohmann::json{std::move(info)};
   auto response =
       cpr::Post(cpr::Url{credentials.GetBaseUrl() + "calculation/"},
@@ -68,6 +69,6 @@ std::variant<TResponseCalculation, std::string> Calculation::Post(
                 cpr::Bearer{credentials.GetCredentials()->access_token});
   auto j = nlohmann::json::parse(response.text);
   if (j.contains("detail")) return j["detail"].get<std::string>();
-  else return j.get<TResponseCalculation>();
+  else return j.get<models::TResponseCalculation>();
 }
 }  // namespace gls

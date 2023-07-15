@@ -15,7 +15,7 @@ struct AuthFixture {};
 
 TEST_CASE("complete Auth test", "[Auth]") {
   gls::Auth auth_{
-      gls::TAuthToken{std::getenv("EMAIL"), std::getenv("PASSWORD")}};
+      gls::models::TAuthToken{std::getenv("EMAIL"), std::getenv("PASSWORD")}};
 
   SECTION("all credentials change after consecutive Login call") {
     auto credentials_saved = auth_.GetCredentials().value();

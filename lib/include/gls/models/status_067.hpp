@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <nlohmann/json.hpp>
-namespace gls {
+namespace gls::models {
 
 enum class Status067 : std::int8_t {
   kInvalid = -1,

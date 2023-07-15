@@ -10,13 +10,13 @@ void check_if_failed(const cpr::Response& response);
 static cpr::Header headers = {{"Content-Type", "application/json"}};
 
 class Auth {
-  TAuthToken email_password;
+  models::TAuthToken email_password;
   std::optional<TTokens> credentials;
   std::string base_url;
 
  public:
   Auth() = delete;
-  explicit Auth(TAuthToken token,
+  explicit Auth(models::TAuthToken token,
                 std::string base_url = "https://back.glsystem.net/api/v1/")
       : email_password(std::move(token)),
         credentials(std::nullopt),

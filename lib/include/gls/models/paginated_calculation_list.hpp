@@ -6,7 +6,7 @@
 
 #include "calculation.hpp"
 
-namespace gls {
+namespace gls::models {
 struct TPaginatedCalculationList {
   std::int64_t count;
   std::string next;

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace gls {
+namespace gls::models {
 struct TGroup {
   std::string title;
   std::int64_t pallet;

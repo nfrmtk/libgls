@@ -2,7 +2,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace gls {
+namespace gls::models {
 struct TAuthToken {
   std::string username;
   std::string password;

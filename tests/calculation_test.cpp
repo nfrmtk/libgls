@@ -5,7 +5,7 @@ TEST_CASE("deleted ctor") {
   gls::Calculation calc(auth);
   SECTION("random parameters result in no answer")
   {
-    auto response = calc.Get(true, true, true, "sad", 1,1,1,gls::Status067::kQueueRecalculation);
+    auto response = calc.Get(true, true, true, "sad", 1,1,1,gls::models::Status067::kQueueRecalculation);
     REQUIRE(std::holds_alternative<std::string>(response));
   }
 }

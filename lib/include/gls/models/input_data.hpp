@@ -1,7 +1,7 @@
 #pragma once
 #include <gls/models/group.hpp>
 
-namespace gls {
+namespace gls::models {
 struct TInputData {
   std::vector<std::int64_t> cargo_spaces;
   std::vector<TGroup> groups;
