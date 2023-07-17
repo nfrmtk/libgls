@@ -15,4 +15,4 @@ struct TCalculationCreate {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCalculationCreate, id, project, input_data,
                                    status, callback_url, external_api)
-}  // namespace gls
+}  // namespace gls::models

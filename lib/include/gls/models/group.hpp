@@ -13,4 +13,4 @@ struct TGroup {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TGroup, title, pallet, cargoes, sort)
 
-}  // namespace gls
+}  // namespace gls::models

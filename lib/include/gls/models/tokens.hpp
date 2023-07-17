@@ -2,7 +2,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace gls {
+namespace gls::models {
 struct TTokens {
   std::string access_token;
   std::string refresh_token;
@@ -13,4 +13,4 @@ struct TTokens {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TTokens, access_token, refresh_token,
                                    token_type, access_token_expires,
                                    refresh_token_expires)
-}  // namespace gls
+}  // namespace gls::models

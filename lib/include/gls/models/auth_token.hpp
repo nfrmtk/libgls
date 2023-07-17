@@ -8,4 +8,4 @@ struct TAuthToken {
   std::string password;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TAuthToken, username, password)
-}  // namespace gls
+}  // namespace gls::models

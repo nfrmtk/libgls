@@ -10,4 +10,4 @@ struct TResponseCalculation {
   Status067 status;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TResponseCalculation, id, project, status)
-}  // namespace gls
+}  // namespace gls::models

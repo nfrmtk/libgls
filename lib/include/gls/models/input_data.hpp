@@ -9,4 +9,4 @@ struct TInputData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TInputData, cargo_spaces, groups, user_sort)
 
-}  // namespace gls
+}  // namespace gls::models

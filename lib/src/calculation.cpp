@@ -1,5 +1,4 @@
 #include <gls/calculation.hpp>
-#include <iostream>
 namespace gls {
 std::string to_string(bool b) { return b ? "true"s : "false"s; }
 std::string to_string(gls::models::Status067 status) {
@@ -46,15 +45,14 @@ std::variant<models::TPaginatedCalculationList, std::string> Calculation::Get(
   auto response = cpr::Get(
       cpr::Url{credentials.GetBaseUrl() + "calculation/"}, std::move(params),
       cpr::Bearer{credentials.GetCredentials()->access_token});
-  std::cout << response.text << "is the json\n";
   auto j = nlohmann::json::parse(response.text);
 
-  if (j.contains("detail")) return j["detail"].get<std::string>();
+  if (j.contains("detail"))
+    return j["detail"].get<std::string>();
   else {
     try {
       return j.get<models::TPaginatedCalculationList>();
-    }
-    catch (const nlohmann::json::exception& ex){
+    } catch (const nlohmann::json::exception& ex) {
       return std::string{"bad json, explanation: "} + ex.what();
     }
   }
@@ -68,12 +66,12 @@ std::variant<models::TResponseCalculation, std::string> Calculation::Post(
                 cpr::Header{headers}, cpr::Body{to_string(body)},
                 cpr::Bearer{credentials.GetCredentials()->access_token});
   auto j = nlohmann::json::parse(response.text);
-  if (j.contains("detail")) return j["detail"].get<std::string>();
+  if (j.contains("detail"))
+    return j["detail"].get<std::string>();
   else {
     try {
       return j.get<models::TResponseCalculation>();
-    }
-    catch (const nlohmann::json::exception& ex){
+    } catch (const nlohmann::json::exception& ex) {
       return std::string{"bad json, explanation: "} + ex.what();
     }
   }

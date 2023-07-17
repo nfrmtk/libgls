@@ -3,7 +3,7 @@
 #include <gls/models/status_067.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
-namespace gls {
+namespace gls::models {
 struct TCalculation {
   std::int64_t id;
   std::int64_t project_id;
@@ -17,4 +17,4 @@ struct TCalculation {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCalculation, id, project_id, updated_at,
                                    created_at, provisional_completion_date,
                                    status, is_recalculate, favorite)
-}  // namespace gls
+}  // namespace gls::models

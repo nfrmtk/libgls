@@ -11,7 +11,7 @@ static cpr::Header headers = {{"Content-Type", "application/json"}};
 
 class Auth {
   models::TAuthToken email_password;
-  std::optional<TTokens> credentials;
+  std::optional<models::TTokens> credentials;
   std::string base_url;
 
  public:
@@ -26,7 +26,8 @@ class Auth {
   Auth& Login();
   Auth& Logout();
 
-  [[nodiscard]] const std::optional<TTokens>& GetCredentials() const noexcept {
+  [[nodiscard]] const std::optional<models::TTokens>& GetCredentials()
+      const noexcept {
     return credentials;
   }
   [[nodiscard]] const std::string& GetBaseUrl() const noexcept {

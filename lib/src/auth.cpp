@@ -16,7 +16,7 @@ Auth& Auth::Login() {
   auto response = cpr::Post(cpr::Url{this->base_url + "auth/login/"},
                             cpr::Body{std::move(body)}, headers);
   check_if_failed(response);
-  credentials = nlohmann::json::parse(response.text).get<TTokens>();
+  credentials = nlohmann::json::parse(response.text).get<models::TTokens>();
   return *this;
 }
 Auth& Auth::Logout() {

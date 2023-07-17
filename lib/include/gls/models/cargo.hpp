@@ -3,8 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace gls {
-struct TInfo {};
+namespace gls::models {
 struct TCargo {
   std::int64_t id;
   std::string title;
@@ -31,4 +30,4 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCargo, id, title, length, width, height,
                                    article, margin_length, margin_width, count,
                                    color, demo, created_at, updated_at,
                                    last_changed_user, user)
-}  // namespace gls
+}  // namespace gls::models

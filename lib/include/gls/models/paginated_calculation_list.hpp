@@ -15,4 +15,4 @@ struct TPaginatedCalculationList {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TPaginatedCalculationList, count, next,
                                    previous, results)
-}  // namespace gls
+}  // namespace gls::models
