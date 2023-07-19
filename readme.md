@@ -1,5 +1,5 @@
 # gls api wrapper
-libgls - простой и удобный sdk для взаимодействия c [Garpix Load System](https://glsystem.net/dokumentaciya-k-api). В данный момент находится в активной разработке.
+libgls - простой и удобный sdk для взаимодействия c [Garpix Load System](https://glsystem.net/dokumentaciya-k-api).
 ## build
 ```shell
 mkdir -p build
@@ -20,5 +20,5 @@ cd build
 cmake .. 
 cmake --build . --target=test
 cd tests
-(test -t 1 && GTEST_COLOR=1 PYTEST_ADDOPTS="--color=yes" ctest -V) || ctest -V
+(test -t 1 && ctest -V) || ctest -V
 ```
