@@ -1,6 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <gls/calculation.hpp>
-TEST_CASE("deleted ctor") {
+TEST_CASE("calculation") {
   gls::Auth auth{{std::getenv("EMAIL"), std::getenv("PASSWORD")}};
   gls::Calculation calc(auth);
   SECTION("random parameters result in no answer") {
