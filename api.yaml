@@ -1,0 +1,5285 @@
+openapi: 3.0.3
+info:
+  title: GLS API
+  version: 1.0.0
+  description: API для взаимодействия с функционалом GLS
+paths:
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      parameters:
+      - in: header
+        name: user-session-token
+        schema:
+          type: string
+        description: Unlogged user token
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      tags:
+      - auth
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/refresh/:
+    post:
+      operationId: auth_refresh_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshToken'
+          description: ''
+  /api/v1/calculation/:
+    get:
+      operationId: calculation_list
+      parameters:
+      - in: query
+        name: favorite
+        schema:
+          type: boolean
+      - in: query
+        name: is_history
+        schema:
+          type: boolean
+      - in: query
+        name: is_recalculate
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: project_id
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - calculating
+          - cancel
+          - designed
+          - error
+          - for_recalculation
+          - in_queue
+          - irrelevant
+          - new
+          - queue_recalculation
+          - recalculation
+          - success
+        description: |-
+          * `new` - New
+          * `in_queue` - Queue
+          * `calculating` - Calculated
+          * `success` - !Успешно завершен
+          * `error` - !Завершен с ошибкой
+          * `designed` - !Спроектирован
+          * `for_recalculation` - !Для перерасчета
+          * `recalculation` - !Перерасчет
+          * `cancel` - Cancel
+          * `queue_recalculation` - !В очереди на перерасчет
+          * `irrelevant` - !Неактуальный
+
+          * `new` - New
+          * `in_queue` - Queue
+          * `calculating` - Calculated
+          * `success` - !Успешно завершен
+          * `error` - !Завершен с ошибкой
+          * `designed` - !Спроектирован
+          * `for_recalculation` - !Для перерасчета
+          * `recalculation` - !Перерасчет
+          * `cancel` - Cancel
+          * `queue_recalculation` - !В очереди на перерасчет
+          * `irrelevant` - !Неактуальный
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCalculationList'
+          description: ''
+    post:
+      operationId: calculation_create
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CalculationCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CalculationCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCalculation'
+          description: ''
+  /api/v1/calculation/{id}/:
+    get:
+      operationId: calculation_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calculation'
+          description: ''
+    patch:
+      operationId: calculation_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCalculationUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCalculationUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCalculationUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationUpdate'
+          description: ''
+    delete:
+      operationId: calculation_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/calculation/{id}/calculation_errors/:
+    get:
+      operationId: calculation_calculation_errors_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationErrors'
+          description: ''
+  /api/v1/calculation/{id}/calculation_pivot_report/:
+    post:
+      operationId: calculation_calculation_pivot_report_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationReportList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CalculationReportList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CalculationReportList'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationReportList'
+          description: ''
+  /api/v1/calculation/{id}/calculation_report/:
+    post:
+      operationId: calculation_calculation_report_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CargoSpaceReportShortInfo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CargoSpaceReportShortInfo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CargoSpaceReportShortInfo'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoSpaceReportShortInfo'
+          description: ''
+  /api/v1/calculation/{id}/calculation_report_page/:
+    get:
+      operationId: calculation_calculation_report_page_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationReportPage'
+          description: ''
+  /api/v1/calculation/{id}/cancel/:
+    post:
+      operationId: calculation_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calculation'
+          description: ''
+  /api/v1/calculation/{id}/cargo_space/{uid}/:
+    get:
+      operationId: calculation_cargo_space_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      - in: path
+        name: uid
+        schema:
+          type: string
+          pattern: ^\w+$
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Calculation'
+          description: ''
+  /api/v1/calculation/{id}/cargoes/:
+    get:
+      operationId: calculation_cargoes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationCargoes'
+          description: ''
+  /api/v1/calculation/{id}/full_pivot_report/:
+    post:
+      operationId: calculation_full_pivot_report_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FullReportPivot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FullReportPivot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FullReportPivot'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FullReportPivot'
+          description: ''
+  /api/v1/calculation/{id}/pivot_report_excluding_pallets/:
+    post:
+      operationId: calculation_pivot_report_excluding_pallets_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportPivotExcludingPallets'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReportPivotExcludingPallets'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReportPivotExcludingPallets'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportPivotExcludingPallets'
+          description: ''
+  /api/v1/calculation/{id}/update_designed/:
+    patch:
+      operationId: calculation_update_designed_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Calculation.
+        required: true
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCalculationDesignedCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCalculationDesignedCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCalculationDesignedCreate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationDesignedCreate'
+          description: ''
+  /api/v1/calculation/create_designed/:
+    post:
+      operationId: calculation_create_designed_create
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationDesignedCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CalculationDesignedCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CalculationDesignedCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCalculation'
+          description: ''
+  /api/v1/calculation/create_with_project/:
+    post:
+      operationId: calculation_create_with_project_create
+      tags:
+      - calculation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationWithProjectCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CalculationWithProjectCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CalculationWithProjectCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseCalculation'
+          description: ''
+  /api/v1/calculation/history/:
+    get:
+      operationId: calculation_history_retrieve
+      tags:
+      - calculation
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryCalculation'
+          description: ''
+  /api/v1/cargo/:
+    get:
+      operationId: cargo_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - cargo
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCargoList'
+          description: ''
+    post:
+      operationId: cargo_create
+      tags:
+      - cargo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cargo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Cargo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Cargo'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+          description: ''
+  /api/v1/cargo-space/:
+    get:
+      operationId: cargo_space_list
+      parameters:
+      - in: query
+        name: cargo_space_type
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - container
+            - pallet
+            - truck
+            - van
+        description: |-
+          * `pallet` - <class 'cargo.models.pallet.Pallet'>
+          * `container` - <class 'cargo.models.container.Container'>
+          * `van` - <class 'cargo.models.van.Van'>
+          * `truck` - <class 'cargo.models.truck.Truck'>
+        explode: true
+        style: form
+      - in: query
+        name: demo
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - cargo-space
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCargoSpaceList'
+          description: ''
+  /api/v1/cargo-space/create_from_file_upload/:
+    post:
+      operationId: cargo_space_create_from_file_upload_create
+      description: Загрузите нужный файл формата 'xsls' для создания грузов
+      tags:
+      - cargo-space
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/cargo-space/sample/:
+    get:
+      operationId: cargo_space_sample_retrieve
+      tags:
+      - cargo-space
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoSpaceSample'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/v1/cargo/{id}/:
+    get:
+      operationId: cargo_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Cargo.
+        required: true
+      tags:
+      - cargo
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+          description: ''
+    put:
+      operationId: cargo_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Cargo.
+        required: true
+      tags:
+      - cargo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cargo'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Cargo'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Cargo'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+          description: ''
+    delete:
+      operationId: cargo_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Cargo.
+        required: true
+      tags:
+      - cargo
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/cargo/{id}/copy/:
+    post:
+      operationId: cargo_copy_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Cargo.
+        required: true
+      tags:
+      - cargo
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+          description: ''
+  /api/v1/cargo/create_from_file_upload/:
+    post:
+      operationId: cargo_create_from_file_upload_create
+      description: Загрузите нужный файл формата 'xsls' для создания грузов
+      tags:
+      - cargo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadExcelFile'
+          description: ''
+  /api/v1/cargo/sample/:
+    get:
+      operationId: cargo_sample_retrieve
+      tags:
+      - cargo
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cargo'
+          description: ''
+  /api/v1/container/:
+    get:
+      operationId: container_list
+      parameters:
+      - in: query
+        name: demo
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - container
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedContainerList'
+          description: ''
+    post:
+      operationId: container_create
+      tags:
+      - container
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Container'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Container'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Container'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Container'
+          description: ''
+  /api/v1/container/{id}/:
+    get:
+      operationId: container_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Container.
+        required: true
+      tags:
+      - container
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Container'
+          description: ''
+    put:
+      operationId: container_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Container.
+        required: true
+      tags:
+      - container
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Container'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Container'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Container'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Container'
+          description: ''
+    delete:
+      operationId: container_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Container.
+        required: true
+      tags:
+      - container
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/container/{id}/copy/:
+    post:
+      operationId: container_copy_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Container.
+        required: true
+      tags:
+      - container
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Container'
+          description: ''
+  /api/v1/content/feedback/:
+    post:
+      operationId: content_feedback_create
+      tags:
+      - content
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feedback'
+          description: ''
+  /api/v1/content/info/:
+    get:
+      operationId: content_info_retrieve
+      tags:
+      - content
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/pallet/:
+    get:
+      operationId: pallet_list
+      parameters:
+      - in: query
+        name: demo
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - pallet
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPalletList'
+          description: ''
+    post:
+      operationId: pallet_create
+      tags:
+      - pallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pallet'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pallet'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Pallet'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pallet'
+          description: ''
+  /api/v1/pallet/{id}/:
+    get:
+      operationId: pallet_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pallet.
+        required: true
+      tags:
+      - pallet
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pallet'
+          description: ''
+    put:
+      operationId: pallet_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pallet.
+        required: true
+      tags:
+      - pallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pallet'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Pallet'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Pallet'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pallet'
+          description: ''
+    delete:
+      operationId: pallet_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pallet.
+        required: true
+      tags:
+      - pallet
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/pallet/{id}/copy/:
+    post:
+      operationId: pallet_copy_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Pallet.
+        required: true
+      tags:
+      - pallet
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pallet'
+          description: ''
+  /api/v1/payment/:
+    post:
+      operationId: payment_create
+      tags:
+      - payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentPart'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentPart'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentPart'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/v1/payment_request/:
+    post:
+      operationId: payment_request_create
+      tags:
+      - payment_request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRequest'
+          description: ''
+  /api/v1/project/:
+    get:
+      operationId: project_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - project
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProjectAllList'
+          description: ''
+    post:
+      operationId: project_create
+      tags:
+      - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectCreate'
+          description: ''
+  /api/v1/project/{id}/:
+    get:
+      operationId: project_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Project.
+        required: true
+      tags:
+      - project
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+    patch:
+      operationId: project_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Project.
+        required: true
+      tags:
+      - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProjectUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectUpdate'
+          description: ''
+    delete:
+      operationId: project_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Project.
+        required: true
+      tags:
+      - project
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/project/{id}/copy/:
+    post:
+      operationId: project_copy_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Project.
+        required: true
+      tags:
+      - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Project'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Project'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+          description: ''
+  /api/v1/project/{id}/history/:
+    get:
+      operationId: project_history_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Project.
+        required: true
+      tags:
+      - project
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HistoryCalculation'
+          description: ''
+  /api/v1/project/create_from_file_upload/:
+    post:
+      operationId: project_create_from_file_upload_create
+      description: Загрузите нужный файл формата 'xsls' для создания грузов
+      tags:
+      - project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadExcelFile'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadExcelFile'
+          description: ''
+  /api/v1/project/sample/:
+    get:
+      operationId: project_sample_retrieve
+      tags:
+      - project
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSample'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/v1/report/{id}/:
+    get:
+      operationId: report_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this !Отчет проекта.
+        required: true
+      tags:
+      - report
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportFile'
+          description: ''
+  /api/v1/tariff/:
+    get:
+      operationId: tariff_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - tariff
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTariffList'
+          description: ''
+  /api/v1/truck/:
+    get:
+      operationId: truck_list
+      parameters:
+      - in: query
+        name: demo
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - truck
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTruckGetList'
+          description: ''
+    post:
+      operationId: truck_create
+      tags:
+      - truck
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TruckCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TruckCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TruckCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckCreateUpdate'
+          description: ''
+  /api/v1/truck/{id}/:
+    get:
+      operationId: truck_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Truck.
+        required: true
+      tags:
+      - truck
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckGet'
+          description: ''
+    put:
+      operationId: truck_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Truck.
+        required: true
+      tags:
+      - truck
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TruckCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TruckCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TruckCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckCreateUpdate'
+          description: ''
+    delete:
+      operationId: truck_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Truck.
+        required: true
+      tags:
+      - truck
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/truck/{id}/copy/:
+    post:
+      operationId: truck_copy_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Truck.
+        required: true
+      tags:
+      - truck
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TruckGet'
+          description: ''
+  /api/v1/user/:
+    post:
+      operationId: user_create
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUser'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+  /api/v1/user/email_confirmation/check_code/:
+    post:
+      operationId: user_email_confirmation_check_code_create
+      summary: Подтверждение email. Этап 2
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailPreConfirmCheckCode'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailPreConfirmCheckCode'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailPreConfirmCheckCode'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailPreConfirmCheckCode'
+          description: ''
+  /api/v1/user/email_confirmation/send_code/:
+    post:
+      operationId: user_email_confirmation_send_code_create
+      summary: Подтверждение email. Этап 1
+      tags:
+      - user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailPreConfirmSend'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailPreConfirmSend'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailPreConfirmSend'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmailPreConfirmSend'
+          description: ''
+  /api/v1/user_tariff/:
+    post:
+      operationId: user_tariff_create
+      tags:
+      - user_tariff
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserTariffCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserTariffCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserTariffCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTariffCreate'
+          description: ''
+  /api/v1/user_tariff/cancel_payment/:
+    post:
+      operationId: user_tariff_cancel_payment_create
+      tags:
+      - user_tariff
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/van/:
+    get:
+      operationId: van_list
+      parameters:
+      - in: query
+        name: demo
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: title__icontains
+        schema:
+          type: string
+      tags:
+      - van
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVanGetList'
+          description: ''
+    post:
+      operationId: van_create
+      tags:
+      - van
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VanCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VanCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VanCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VanCreateUpdate'
+          description: ''
+  /api/v1/van/{id}/:
+    get:
+      operationId: van_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Van.
+        required: true
+      tags:
+      - van
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VanGet'
+          description: ''
+    put:
+      operationId: van_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Van.
+        required: true
+      tags:
+      - van
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VanCreateUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VanCreateUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VanCreateUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VanCreateUpdate'
+          description: ''
+    delete:
+      operationId: van_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Van.
+        required: true
+      tags:
+      - van
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/van/{id}/copy/:
+    post:
+      operationId: van_copy_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Van.
+        required: true
+      tags:
+      - van
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VanGet'
+          description: ''
+components:
+  schemas:
+    Advantage:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+      required:
+      - id
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    Axes:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        distance:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Distance (mm)
+        default_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Нагрузка на ось пустого ГП (кг)'
+        max_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Допустимая нагрузка на ось (кг)'
+      required:
+      - default_load
+      - distance
+      - id
+      - max_load
+      - title
+    BlankEnum:
+      enum:
+      - ''
+    Calculation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        project_id:
+          type: integer
+          readOnly: true
+        is_recalculate:
+          type: boolean
+          title: '!Перерасчет'
+        status:
+          $ref: '#/components/schemas/Status067Enum'
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: '!Дата изменения расчета'
+        favorite:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: '!Дата создания расчета'
+        provisional_completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          title: '!Предварительная дата окончания расчета'
+      required:
+      - created_at
+      - id
+      - project_id
+      - updated_at
+    CalculationCargoes:
+      type: object
+      properties:
+        packed:
+          type: string
+          readOnly: true
+          nullable: true
+        unpacked:
+          type: string
+          readOnly: true
+          nullable: true
+      required:
+      - packed
+      - unpacked
+    CalculationCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        project:
+          type: integer
+        input_data:
+          allOf:
+          - $ref: '#/components/schemas/InputData'
+          description: Данные запроса на расчет
+        status:
+          $ref: '#/components/schemas/Status067Enum'
+        callback_url:
+          type: string
+          format: uri
+          description: url эндпоинта для отправки ответа
+        external_api:
+          type: boolean
+          title: '!Запрос с внешнего API'
+      required:
+      - id
+      - input_data
+      - project
+    CalculationDesignedCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        project:
+          type: integer
+        input_data:
+          $ref: '#/components/schemas/InputDataDesigned'
+      required:
+      - id
+      - input_data
+      - project
+      - status
+    CalculationErrors:
+      type: object
+      properties:
+        calculation_errors:
+          type: object
+          additionalProperties: {}
+      required:
+      - calculation_errors
+    CalculationLastCalcResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status067Enum'
+        start_time:
+          type: string
+          format: date-time
+          nullable: true
+          title: '!Время начала расчета'
+        provisional_completion_date:
+          type: string
+          format: date-time
+          nullable: true
+          title: '!Предварительная дата окончания расчета'
+      required:
+      - id
+    CalculationReportList:
+      type: object
+      properties:
+        file_type:
+          $ref: '#/components/schemas/FileTypeEnum'
+        uid:
+          type: string
+          maxLength: 32
+        callback_url:
+          type: string
+          format: uri
+          description: url эндпоинта для отправки ответа
+      required:
+      - file_type
+      - uid
+    CalculationReportPage:
+      type: object
+      properties:
+        cargo_spaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoSpaceReportInfo'
+      required:
+      - cargo_spaces
+    CalculationUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        favorite:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: '!Дата создания расчета'
+      required:
+      - created_at
+      - favorite
+      - id
+    CalculationWithProjectCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        project:
+          type: integer
+        input_data:
+          allOf:
+          - $ref: '#/components/schemas/InputData'
+          description: Данные запроса на расчет
+        status:
+          $ref: '#/components/schemas/Status067Enum'
+        callback_url:
+          type: string
+          format: uri
+          description: url эндпоинта для отправки ответа
+        external_api:
+          type: boolean
+          title: '!Запрос с внешнего API'
+        type_report:
+          type: array
+          items:
+            $ref: '#/components/schemas/TypeReport4e4Enum'
+          writeOnly: true
+      required:
+      - id
+      - input_data
+      - project
+    Cargo:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 50
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 10
+          title: Cargo length(mm)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 10
+          title: Cargo width(mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 10
+          title: Cargo height (mm)
+        mass:
+          type: number
+          format: double
+          title: Масса (кг)
+        stacking:
+          type: boolean
+        stacking_limit:
+          type: integer
+          maximum: 32767
+          minimum: 0
+        turnover:
+          type: boolean
+          title: '!Кантование'
+        article:
+          type: string
+          title: '!Артикул'
+          maxLength: 255
+        margin_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Отступ по длине (мм)'
+        margin_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Отступ по ширине (мм)'
+        color:
+          type: string
+          pattern: ^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$
+          maxLength: 18
+        demo:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        last_changed_user:
+          type: integer
+          nullable: true
+          title: Последний изменивший пользователь
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - created_at
+      - height
+      - id
+      - length
+      - mass
+      - title
+      - updated_at
+      - user
+      - width
+    CargoDesigned:
+      type: object
+      properties:
+        title:
+          type: string
+        length:
+          type: integer
+          maximum: 32776
+          minimum: 10
+        width:
+          type: integer
+          maximum: 32776
+          minimum: 10
+        height:
+          type: integer
+          maximum: 32776
+          minimum: 10
+        mass:
+          type: number
+          format: double
+          maximum: 2147483647.0
+          minimum: 0.001
+        stacking:
+          type: boolean
+        stacking_limit:
+          type: integer
+          minimum: 0
+        turnover:
+          type: boolean
+        article:
+          type: string
+        margin_length:
+          type: integer
+          minimum: 0
+        margin_width:
+          type: integer
+          minimum: 0
+        count:
+          type: integer
+          minimum: 1
+        color:
+          type: string
+        info:
+          type: object
+          additionalProperties: {}
+    CargoSpace:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+        cargo_space_type:
+          allOf:
+          - $ref: '#/components/schemas/CargoSpaceTypeEnum'
+          readOnly: true
+      required:
+      - cargo_space_type
+      - carrying_capacity
+      - created_at
+      - demo
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - updated_at
+      - user
+      - width
+    CargoSpaceListEnum:
+      enum:
+      - van
+      - truck
+      - container
+      - pallet
+      type: string
+      description: |-
+        * `van` - Фургон
+        * `truck` - Фура
+        * `container` - Контейнер
+        * `pallet` - Палета
+    CargoSpaceReportInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип отчета
+        title:
+          type: string
+          description: Название файла
+        uid:
+          type: string
+          description: uid грузового пространства
+        pallets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PalletReport'
+          description: Список палет
+      required:
+      - pallets
+      - title
+      - type
+      - uid
+    CargoSpaceReportShortInfo:
+      type: object
+      properties:
+        type_report:
+          $ref: '#/components/schemas/CargoSpaceReportShortInfoTypeReportEnum'
+        uid:
+          type: string
+        file_type:
+          $ref: '#/components/schemas/FileTypeEnum'
+        callback_url:
+          type: string
+          format: uri
+          description: url эндпоинта для отправки ответа
+      required:
+      - file_type
+      - type_report
+      - uid
+    CargoSpaceReportShortInfoTypeReportEnum:
+      enum:
+      - cargo_spaces
+      - pallets
+      type: string
+      description: |-
+        * `cargo_spaces` - cargo_spaces
+        * `pallets` - pallets
+    CargoSpaceResponse:
+      oneOf:
+      - $ref: '#/components/schemas/PalletResponseTyped'
+      - $ref: '#/components/schemas/ContainerResponseTyped'
+      - $ref: '#/components/schemas/VanResponseTyped'
+      - $ref: '#/components/schemas/TruckResponseTyped'
+      discriminator:
+        propertyName: resourcetype
+        mapping:
+          Pallet: '#/components/schemas/PalletResponseTyped'
+          Container: '#/components/schemas/ContainerResponseTyped'
+          Van: '#/components/schemas/VanResponseTyped'
+          Truck: '#/components/schemas/TruckResponseTyped'
+    CargoSpaceSample:
+      type: object
+      properties:
+        cargo_space:
+          type: string
+          readOnly: true
+      required:
+      - cargo_space
+    CargoSpaceTypeEnum:
+      enum:
+      - pallet
+      - container
+      - van
+      - truck
+      type: string
+      description: |-
+        * `pallet` - <class 'cargo.models.pallet.Pallet'>
+        * `container` - <class 'cargo.models.container.Container'>
+        * `van` - <class 'cargo.models.van.Van'>
+        * `truck` - <class 'cargo.models.truck.Truck'>
+    Container:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - carrying_capacity
+      - created_at
+      - demo
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - updated_at
+      - user
+      - width
+    ContainerResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+        user:
+          type: integer
+          nullable: true
+        type:
+          type: string
+        uid:
+          type: string
+      required:
+      - carrying_capacity
+      - created_at
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - type
+      - uid
+      - updated_at
+      - width
+    ContainerResponseTyped:
+      allOf:
+      - type: object
+        properties:
+          resourcetype:
+            type: string
+        required:
+        - resourcetype
+      - $ref: '#/components/schemas/ContainerResponse'
+    CreateUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          minLength: 5
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        company_old:
+          type: string
+          nullable: true
+          title: Company
+          maxLength: 30
+        company:
+          type: string
+        confirm:
+          type: boolean
+          title: '!Согласие на рассылку'
+        confirmation_token:
+          type: string
+        role_type:
+          allOf:
+          - $ref: '#/components/schemas/RoleTypeEnum'
+          title: Role
+        promocode:
+          type: string
+          nullable: true
+        utm_source:
+          type: string
+          title: '!Рекламная система'
+          maxLength: 120
+        utm_medium:
+          type: string
+          title: '!Тип трафика'
+          maxLength: 120
+        utm_campaign:
+          type: string
+          title: '!Обозначение рекламной кампании'
+          maxLength: 120
+        utm_term:
+          type: string
+          title: '!Условие поиска компании'
+          maxLength: 120
+        utm_content:
+          type: string
+          title: '!Содержание компании'
+          maxLength: 120
+        page_wellcome:
+          type: string
+          readOnly: true
+      required:
+      - confirmation_token
+      - email
+      - first_name
+      - id
+      - last_name
+      - page_wellcome
+      - password
+      - phone
+      - role_type
+      - username
+    EmailPreConfirmCheckCode:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        email_confirmation_code:
+          type: string
+          maxLength: 15
+      required:
+      - email
+      - email_confirmation_code
+    EmailPreConfirmSend:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        fullname:
+          type: string
+          title: FULL NAME
+          maxLength: 512
+        phone:
+          type: string
+          maxLength: 64
+        email:
+          type: string
+          format: email
+          maxLength: 512
+        message:
+          type: string
+          maxLength: 500
+        form_type:
+          $ref: '#/components/schemas/FormTypeEnum'
+      required:
+      - id
+      - phone
+    FileTypeEnum:
+      enum:
+      - excel
+      - pdf
+      type: string
+      description: |-
+        * `excel` - excel
+        * `pdf` - pdf
+    FormTypeEnum:
+      enum:
+      - request
+      - question
+      - partner
+      - promo_code
+      - withdrawal_request
+      type: string
+      description: |-
+        * `request` - !Оставить заявку
+        * `question` - !Задать вопрос
+        * `partner` - !Стать партнером
+        * `promo_code` - !Оставить заявку на промокоды
+        * `withdrawal_request` - !Оставить заявку на вывод средств
+    FullReportPivot:
+      type: object
+      properties:
+        file_type:
+          $ref: '#/components/schemas/FileTypeEnum'
+        callback_url:
+          type: string
+          format: uri
+          description: url эндпоинта для отправки ответа
+      required:
+      - file_type
+    Group:
+      type: object
+      properties:
+        title:
+          type: string
+        pallet:
+          type: integer
+          nullable: true
+        cargoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/InputCargo'
+        sort:
+          type: integer
+          minimum: 1
+      required:
+      - cargoes
+      - pallet
+      - sort
+    GroupDesigned:
+      type: object
+      properties:
+        title:
+          type: string
+        pallet:
+          type: integer
+          nullable: true
+        cargoes:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoDesigned'
+        sort:
+          type: integer
+          minimum: 1
+      required:
+      - pallet
+      - sort
+    HistoryCalculation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: '!Дата создания расчета'
+        is_recalculate:
+          type: boolean
+          title: '!Перерасчет'
+        status:
+          $ref: '#/components/schemas/Status067Enum'
+        favorite:
+          type: boolean
+      required:
+      - created_at
+      - id
+    InputCargo:
+      type: object
+      properties:
+        title:
+          type: string
+        length:
+          type: integer
+          maximum: 32776
+          minimum: 10
+        width:
+          type: integer
+          maximum: 32776
+          minimum: 10
+        height:
+          type: integer
+          maximum: 32776
+          minimum: 10
+        mass:
+          type: number
+          format: double
+          maximum: 2147483647.0
+          minimum: 0.001
+        stacking:
+          type: boolean
+        stacking_limit:
+          type: integer
+          minimum: 0
+        turnover:
+          type: boolean
+        article:
+          type: string
+        margin_length:
+          type: integer
+          minimum: 0
+        margin_width:
+          type: integer
+          minimum: 0
+        count:
+          type: integer
+          minimum: 1
+        color:
+          type: string
+        info:
+          type: object
+          additionalProperties: {}
+      required:
+      - count
+      - height
+      - length
+      - mass
+      - stacking
+      - stacking_limit
+      - title
+      - turnover
+      - width
+    InputData:
+      type: object
+      properties:
+        cargo_spaces:
+          type: array
+          items:
+            type: integer
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        userSort:
+          type: boolean
+      required:
+      - cargo_spaces
+      - groups
+    InputDataDesigned:
+      type: object
+      properties:
+        cargo_spaces:
+          type: array
+          items:
+            type: integer
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupDesigned'
+        userSort:
+          type: boolean
+    NullEnum:
+      enum:
+      - null
+    PaginatedCalculationList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Calculation'
+    PaginatedCargoList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cargo'
+    PaginatedCargoSpaceList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoSpace'
+    PaginatedContainerList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+    PaginatedPalletList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pallet'
+    PaginatedProjectAllList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectAll'
+    PaginatedTariffList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tariff'
+    PaginatedTruckGetList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TruckGet'
+    PaginatedVanGetList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/VanGet'
+    Pallet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+        margin_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: Отступ от другого пространства по длине (мм)
+        margin_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: Отступ от другого пространства по ширине (мм)
+      required:
+      - carrying_capacity
+      - created_at
+      - demo
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - updated_at
+      - user
+      - width
+    PalletReport:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Название
+        uid:
+          type: string
+          description: uid
+      required:
+      - title
+      - uid
+    PalletResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+        user:
+          type: integer
+          nullable: true
+        type:
+          type: string
+        uid:
+          type: string
+        margin_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: Отступ от другого пространства по длине (мм)
+        margin_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: Отступ от другого пространства по ширине (мм)
+      required:
+      - carrying_capacity
+      - created_at
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - type
+      - uid
+      - updated_at
+      - width
+    PalletResponseTyped:
+      allOf:
+      - type: object
+        properties:
+          resourcetype:
+            type: string
+        required:
+        - resourcetype
+      - $ref: '#/components/schemas/PalletResponse'
+    PatchedCalculationDesignedCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        project:
+          type: integer
+        input_data:
+          $ref: '#/components/schemas/InputDataDesigned'
+    PatchedCalculationUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        favorite:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: '!Дата создания расчета'
+    PatchedProjectUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_tariff_id:
+          type: integer
+          writeOnly: true
+        recurring:
+          type: boolean
+          writeOnly: true
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        payed_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Created date
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Updated date
+        form:
+          type: string
+          readOnly: true
+        result_data:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+          title: Result
+        error:
+          type: string
+        user:
+          type: integer
+          readOnly: true
+        user_tariff:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: User's tariff
+      required:
+      - created_at
+      - currency
+      - form
+      - id
+      - payed_amount
+      - recurring
+      - result_data
+      - status
+      - total_amount
+      - updated_at
+      - user
+      - user_tariff
+      - user_tariff_id
+    PaymentPart:
+      type: object
+      properties:
+        user_tariff:
+          type: integer
+          nullable: true
+          title: User's tariff
+        recurring:
+          type: boolean
+          title: '!Инициирующий рекуррентный платеж'
+    PaymentRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        CEO:
+          type: string
+          title: General manager
+          maxLength: 255
+        legal_address:
+          type: string
+          title: '!Юридический адрес'
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        phone:
+          type: string
+          maxLength: 20
+        inn:
+          type: string
+          title: '!ИНН клиента'
+          maxLength: 15
+        kpp:
+          type: string
+          title: '!КПП клиента'
+          maxLength: 32
+        ogrn:
+          type: string
+          title: '!ОГРН клиента'
+          maxLength: 15
+        checking_account:
+          type: string
+          title: '!Расчететный счет'
+          maxLength: 32
+        correspondent_account:
+          type: string
+          title: '!Корреспондентский счет'
+          maxLength: 32
+        status:
+          $ref: '#/components/schemas/PaymentRequestStatusEnum'
+        bank_title:
+          type: string
+          title: Bank name
+          maxLength: 255
+        bank_inn:
+          type: string
+          title: '!ИНН банка'
+          maxLength: 15
+        bank_kpp:
+          type: string
+          title: '!КПП банка'
+          maxLength: 32
+        bank_bik:
+          type: string
+          title: '!БИК банка'
+          maxLength: 15
+        bank_kbk:
+          type: string
+          title: '!КБК банка'
+          maxLength: 15
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        tariff:
+          type: integer
+      required:
+      - CEO
+      - bank_bik
+      - bank_title
+      - checking_account
+      - correspondent_account
+      - created_at
+      - id
+      - inn
+      - legal_address
+      - phone
+      - tariff
+      - title
+      - updated_at
+    PaymentRequestStatusEnum:
+      enum:
+      - unconfirmed
+      - processing
+      - success
+      - cancel
+      type: string
+      description: |-
+        * `unconfirmed` - Unconfirmed
+        * `processing` - !Взят в обработку
+        * `success` - Completed successfully
+        * `cancel` - Canceled
+    PaymentStatusEnum:
+      enum:
+      - created
+      - pending
+      - waiting_for_capture
+      - succeeded
+      - cancel
+      - timeout
+      - refunded
+      type: string
+      description: |-
+        * `created` - CREATED
+        * `pending` - PENDING
+        * `waiting_for_capture` - PAYED_FULL
+        * `succeeded` - PAYED_PARTIAL
+        * `cancel` - CANCELED
+        * `timeout` - TIMEOUT
+        * `refunded` - REFUNDED
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        is_calculating:
+          type: boolean
+          title: '!Идет расчет'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+        cargo_spaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/CargoSpaceResponse'
+          readOnly: true
+          nullable: true
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupDesigned'
+          readOnly: true
+          nullable: true
+        calculation_id:
+          type: string
+          readOnly: true
+          nullable: true
+        calculation_status:
+          type: string
+          readOnly: true
+          nullable: true
+        first_visual:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+          nullable: true
+        demo:
+          type: boolean
+        userSort:
+          type: string
+          readOnly: true
+        start_date:
+          type: string
+          readOnly: true
+          nullable: true
+        completion_date:
+          type: string
+          readOnly: true
+          nullable: true
+        last_calc:
+          allOf:
+          - $ref: '#/components/schemas/CalculationLastCalcResponse'
+          readOnly: true
+          nullable: true
+      required:
+      - calculation_id
+      - calculation_status
+      - cargo_spaces
+      - completion_date
+      - created_at
+      - first_visual
+      - groups
+      - id
+      - last_calc
+      - start_date
+      - title
+      - updated_at
+      - userSort
+    ProjectAll:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+        is_calculating:
+          type: boolean
+          title: '!Идет расчет'
+        demo:
+          type: boolean
+          readOnly: true
+        absolute_url:
+          type: string
+          readOnly: true
+      required:
+      - absolute_url
+      - created_at
+      - demo
+      - id
+      - title
+      - updated_at
+    ProjectCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+        demo:
+          type: boolean
+          readOnly: true
+        is_calculating:
+          type: boolean
+          readOnly: true
+          title: '!Идет расчет'
+        absolute_url:
+          type: string
+          readOnly: true
+      required:
+      - absolute_url
+      - created_at
+      - demo
+      - id
+      - is_calculating
+      - title
+      - updated_at
+    ProjectSample:
+      type: object
+      properties:
+        project:
+          type: string
+          readOnly: true
+      required:
+      - project
+    ProjectUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+      required:
+      - created_at
+      - id
+      - title
+      - updated_at
+    RefreshToken:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+      required:
+      - refresh_token
+    ReportFile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        type_report:
+          allOf:
+          - $ref: '#/components/schemas/ReportFileTypeReportEnum'
+          title: '!Тип отчета'
+        file_type:
+          allOf:
+          - $ref: '#/components/schemas/FileTypeEnum'
+          title: '!Тип файла отчета'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Updated
+        title:
+          type: string
+          maxLength: 255
+        report_file:
+          type: string
+          readOnly: true
+        calculation:
+          type: integer
+        uid:
+          type: string
+          title: '!uid ГП/паллеты'
+          maxLength: 150
+        report_status:
+          allOf:
+          - $ref: '#/components/schemas/ReportStatusEnum'
+          title: Status
+        error_message:
+          type: string
+          title: '!Сообщение об ошибке'
+        completion_date:
+          type: string
+          readOnly: true
+      required:
+      - calculation
+      - completion_date
+      - created_at
+      - id
+      - report_file
+      - updated_at
+    ReportFileTypeReportEnum:
+      enum:
+      - cargo_spaces
+      - pallets
+      - pivot
+      - full_pivot
+      - excluding
+      type: string
+      description: |-
+        * `cargo_spaces` - !Отчет для ГП
+        * `pallets` - !Отчет для палет
+        * `pivot` - !Консолидированный отчет о погрузке
+        * `full_pivot` - !Полный консолидированный отчет
+        * `excluding` - !Консолидированный отчет без паллет
+    ReportPivotExcludingPallets:
+      type: object
+      properties:
+        file_type:
+          $ref: '#/components/schemas/FileTypeEnum'
+        callback_url:
+          type: string
+          format: uri
+          description: url эндпоинта для отправки ответа
+      required:
+      - file_type
+    ReportStatusEnum:
+      enum:
+      - created
+      - generating
+      - generating_uid
+      - error_completed
+      - completed
+      - awaiting_calc
+      type: string
+      description: |-
+        * `created` - Created
+        * `generating` - !Генерируется
+        * `generating_uid` - !Генерируется UID
+        * `error_completed` - !Сгенерирован с ошибкой
+        * `completed` - !Успешно сгенерирован
+        * `awaiting_calc` - !Ожидает расчета
+    ResponseCalculation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        project:
+          type: integer
+        status:
+          $ref: '#/components/schemas/Status067Enum'
+      required:
+      - id
+      - project
+    RoleTypeEnum:
+      enum:
+      - partner
+      - user
+      type: string
+      description: |-
+        * `partner` - Partner
+        * `user` - User
+    Status067Enum:
+      enum:
+      - new
+      - in_queue
+      - calculating
+      - success
+      - error
+      - designed
+      - for_recalculation
+      - recalculation
+      - cancel
+      - queue_recalculation
+      - irrelevant
+      type: string
+      description: |-
+        * `new` - New
+        * `in_queue` - Queue
+        * `calculating` - Calculated
+        * `success` - !Успешно завершен
+        * `error` - !Завершен с ошибкой
+        * `designed` - !Спроектирован
+        * `for_recalculation` - !Для перерасчета
+        * `recalculation` - !Перерасчет
+        * `cancel` - Cancel
+        * `queue_recalculation` - !В очереди на перерасчет
+        * `irrelevant` - !Неактуальный
+    Tariff:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        advantages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Advantage'
+          readOnly: true
+        promocode_info:
+          type: string
+          readOnly: true
+        period:
+          type: string
+          readOnly: true
+        label:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 512
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,2})?$
+          nullable: true
+          title: '!Итоговая цена'
+        cargo_space_list:
+          nullable: true
+          title: '!Грузовые пространства'
+          oneOf:
+          - $ref: '#/components/schemas/CargoSpaceListEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        cargo_space_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -1
+          nullable: true
+          title: '!Количество грузовых пространств'
+          description: '!-1 = без ограничений'
+        project_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -1
+          nullable: true
+          title: '!Количество проектов'
+          description: '!-1 = без ограничений'
+        system_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -1
+          nullable: true
+          title: '!Количество систем в проекте'
+          description: '!-1 = без ограничений'
+        cargos_count:
+          type: integer
+          maximum: 2147483647
+          minimum: -1
+          nullable: true
+          title: '!Количество грузов в проекте'
+          description: '!-1 = без ограничений'
+        allow_palletizing:
+          type: boolean
+          title: '!Погрузка на палету'
+        ruler:
+          type: boolean
+          title: '!Доступ к линейке'
+        api:
+          type: boolean
+          title: '!Доступ к внешней API'
+        demo_editing:
+          type: boolean
+          title: '!Редактирование демо сущностей'
+        excel_loading:
+          type: boolean
+          title: '!Возможность загружать Excel'
+        project_history:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: '!Количество историй расчетов'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        is_free:
+          type: boolean
+          title: Free
+        auto_payment:
+          type: boolean
+        count_employees:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Количество сотрудников'
+        price_per_period:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,2})?$
+          nullable: true
+          title: '!Цена за период'
+        description:
+          type: string
+        sort:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Sorting
+          description: '!Чем больше число, тем выше в списке'
+        is_active:
+          type: boolean
+          title: '!Включено'
+        marketing:
+          type: string
+          maxLength: 255
+        marketing_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,2})?$
+          nullable: true
+        base_type:
+          type: integer
+          nullable: true
+          title: Базовый тип
+      required:
+      - advantages
+      - created_at
+      - id
+      - label
+      - period
+      - promocode_info
+      - title
+      - updated_at
+    TractorCreateUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        hitch_distance:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: '!Расстояние от задней оси до сцепки (мм)'
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          writeOnly: true
+      required:
+      - axles
+      - hitch_distance
+      - length
+      - mass
+      - title
+    TractorGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        hitch_distance:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: '!Расстояние от задней оси до сцепки (мм)'
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          readOnly: true
+      required:
+      - axles
+      - created_at
+      - hitch_distance
+      - id
+      - length
+      - mass
+      - title
+      - updated_at
+    TruckCreateUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          writeOnly: true
+        hitch_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Нагрузка пустого полуприцепа на сцепку (кг)'
+        hitch_max_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Допустимая нагрузка на сцепку (кг)'
+        hitch_distance:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: '!Расстояние от передней оси до сцепки (мм)'
+        tractor:
+          $ref: '#/components/schemas/TractorCreateUpdate'
+      required:
+      - axles
+      - carrying_capacity
+      - created_at
+      - demo
+      - height
+      - hitch_distance
+      - hitch_load
+      - hitch_max_load
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - tractor
+      - updated_at
+      - user
+      - width
+    TruckGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+        user:
+          type: integer
+          nullable: true
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          readOnly: true
+        hitch_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Нагрузка пустого полуприцепа на сцепку (кг)'
+        hitch_max_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Допустимая нагрузка на сцепку (кг)'
+        hitch_distance:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: '!Расстояние от передней оси до сцепки (мм)'
+        tractor:
+          allOf:
+          - $ref: '#/components/schemas/TractorGet'
+          readOnly: true
+      required:
+      - axles
+      - carrying_capacity
+      - created_at
+      - height
+      - hitch_distance
+      - hitch_load
+      - hitch_max_load
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - tractor
+      - updated_at
+      - width
+    TruckResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+        user:
+          type: integer
+          nullable: true
+        type:
+          type: string
+        uid:
+          type: string
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          readOnly: true
+        hitch_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Нагрузка пустого полуприцепа на сцепку (кг)'
+        hitch_max_load:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: '!Допустимая нагрузка на сцепку (кг)'
+        hitch_distance:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: '!Расстояние от передней оси до сцепки (мм)'
+        tractor:
+          allOf:
+          - $ref: '#/components/schemas/TractorGet'
+          readOnly: true
+      required:
+      - axles
+      - carrying_capacity
+      - created_at
+      - height
+      - hitch_distance
+      - hitch_load
+      - hitch_max_load
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - tractor
+      - type
+      - uid
+      - updated_at
+      - width
+    TruckResponseTyped:
+      allOf:
+      - type: object
+        properties:
+          resourcetype:
+            type: string
+        required:
+        - resourcetype
+      - $ref: '#/components/schemas/TruckResponse'
+    TypeReport4e4Enum:
+      enum:
+      - excel
+      - pdf
+      type: string
+      description: |-
+        * `excel` - excel
+        * `pdf` - pdf
+    UploadExcelFile:
+      type: object
+      properties:
+        file:
+          type: string
+          format: uri
+          writeOnly: true
+      required:
+      - file
+    UserTariffCreate:
+      type: object
+      properties:
+        tariff:
+          type: integer
+          writeOnly: true
+        is_hold:
+          type: boolean
+          default: true
+      required:
+      - tariff
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: array
+          items: {}
+          default:
+          - Error
+    VanCreateUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          writeOnly: true
+        full_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Full length (mm)
+      required:
+      - axles
+      - carrying_capacity
+      - created_at
+      - demo
+      - full_length
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - updated_at
+      - user
+      - width
+    VanGet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+        user:
+          type: integer
+          nullable: true
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          readOnly: true
+        full_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Full length (mm)
+      required:
+      - axles
+      - carrying_capacity
+      - created_at
+      - full_length
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - updated_at
+      - width
+    VanResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        mass:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Weight (kg)
+        carrying_capacity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+          title: Capacity (kg)
+        width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Width (mm)
+        height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Height (mm)
+        length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Length (mm)
+        loading_width:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading width (mm)
+        loading_height:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading height (mm)
+        loading_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Loading length (mm)
+        indentation_width:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине левый (мм)'
+        indentation_width_right:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по ширине правый (мм)'
+        indentation_height:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте снизу (мм)'
+        indentation_height_top:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по высоте сверху (мм)'
+        indentation_length:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине от начала (мм)'
+        indentation_length_end:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          title: '!Внутренний отступ по длине с конца (мм)'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of creation
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date of change
+        demo:
+          type: boolean
+        user:
+          type: integer
+          nullable: true
+        type:
+          type: string
+        uid:
+          type: string
+        axles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Axes'
+          readOnly: true
+        full_length:
+          type: integer
+          maximum: 32767
+          minimum: 50
+          title: Full length (mm)
+      required:
+      - axles
+      - carrying_capacity
+      - created_at
+      - full_length
+      - height
+      - id
+      - length
+      - loading_height
+      - loading_length
+      - loading_width
+      - mass
+      - title
+      - type
+      - uid
+      - updated_at
+      - width
+    VanResponseTyped:
+      allOf:
+      - type: object
+        properties:
+          resourcetype:
+            type: string
+        required:
+        - resourcetype
+      - $ref: '#/components/schemas/VanResponse'
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    oauth2:
+      type: oauth2
+      flows: {}
+    tokenAuth:
+      type: http
+      scheme: bearer
