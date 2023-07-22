@@ -5,29 +5,15 @@ TEST_CASE("complete cargo test") {
   gls::Auth auth{{std::getenv("EMAIL"), std::getenv("PASSWORD")}};
   gls::Cargo cargo{auth};
   SECTION("post-get") {
-    gls::models::TCargo thing = {123,
-                                 "mytitle",
-                                 12,
-                                 12,
-                                 12,
-                                 100,
-                                 false,
-                                 12,
-                                 false,
-                                 "my",
-                                 1,
-                                 1,
-                                 1,
-                                 "red",
-                                 false,
-                                 "2017-07-21T17:32:28Z",
-                                 "2017-07-23T17:32:28Z",
-                                 1,
-                                 1};
-    cargo.Post(std::move(thing));
-    auto res = cargo.GetById(123);
-    REQUIRE(std::holds_alternative<gls::models::TCargo>(res));
-    REQUIRE(std::get<gls::models::TCargo>(res).id == 123);
-    REQUIRE(std::get<gls::models::TCargo>(res).color == "red");
+    gls::models::TCargo thing = {"string", 32767,        32767,    32767,       100,
+                                 true,    12,        true, "string", 32767,
+                                 32767,        "#498BCe", true, 213};
+    auto [j, status] = cargo.Post(std::move(thing));
+    REQUIRE(status / 100 == 2);
+    REQUIRE(j["title"].get<std::string>() == "string"); // same as thing's field
+
+    auto [newj, newstatus] = cargo.GetById(j["id"].get<std::int64_t>());
+    REQUIRE(status / 100 == 2);
+    REQUIRE(j["title"].get<std::string>() == "string");
   }
 }

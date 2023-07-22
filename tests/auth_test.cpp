@@ -11,8 +11,6 @@ TEST_CASE("ctor", "[throw]") {
       std::runtime_error);
 }
 
-struct AuthFixture {};
-
 TEST_CASE("complete Auth test", "[Auth]") {
   gls::Auth auth_{
       gls::models::TAuthToken{std::getenv("EMAIL"), std::getenv("PASSWORD")}};

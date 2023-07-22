@@ -15,11 +15,11 @@ class Calculation {
  public:
   Calculation() = delete;
   explicit Calculation(const Auth& credentials) : credentials(credentials) {}
-  std::variant<models::TPaginatedCalculationList, std::string> Get(
-      bool favorite, bool is_history, bool is_recalculate, std::string ordering,
-      std::int64_t page, std::int64_t page_size, std::int64_t project_id,
-      gls::models::Status067 status);
-  std::variant<models::TResponseCalculation, std::string> Post(
-      models::TCalculationCreate info);
+  std::optional<nlohmann::json> Get(bool favorite, bool is_history,
+                                    bool is_recalculate, std::string ordering,
+                                    std::int64_t page, std::int64_t page_size,
+                                    std::int64_t project_id,
+                                    gls::models::Status067 status);
+  std::optional<nlohmann::json> Post(models::TCalculationCreate info);
 };
 }  // namespace gls
