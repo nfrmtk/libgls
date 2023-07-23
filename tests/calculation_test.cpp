@@ -27,7 +27,7 @@ TEST_CASE("calculation") {
       .indentation_height = 0,
       .indentation_height_top = 0,
       .indentation_length = 0,
-      .indentation_length_end = 0,
+      .indentation_length_end = 0
   };
   gls::Calculation calc(auth);
   CalculationFixture calcfixture(
