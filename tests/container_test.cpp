@@ -14,20 +14,20 @@ TEST_CASE("complete container test") {
     }
     auto object =
         gls::models::TContainer{.title = "test-" + std::to_string(max_id + 1),
+                                .mass = 10,
                                 .carrying_capacity = 1,
-                                .height = 100,
-                                .width = 100,
                                 .length = 100,
-                                .loading_height = 100,
+                                .width = 100,
+                                .height = 100,
                                 .loading_width = 100,
+                                .loading_height = 100,
                                 .loading_length = 100,
                                 .indentation_width = 0,
                                 .indentation_width_right = 0,
                                 .indentation_height = 0,
                                 .indentation_height_top = 0,
                                 .indentation_length = 0,
-                                .indentation_length_end = 0,
-                                .mass = 10};
+                                .indentation_length_end = 0};
     auto fixture = ContainerFixture(cont, std::move(object));
     auto res = fixture.cont.GetById(fixture.id);
     REQUIRE(res.second / 100 == 2);
