@@ -19,7 +19,6 @@ struct TCargoDesigned {
   std::int64_t margin_width;
   std::int64_t count;
   std::string color;
-  TInfo info;  // idk
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TCargoDesigned, title, length, width, height,
                                    mass, stacking, stacking_limit, turnover,

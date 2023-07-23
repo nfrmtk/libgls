@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <nlohmann/json.hpp>
-namespace gls {
+namespace gls::models {
+
 enum class CargoSpaceList { kInvalid = -1, kPallet, kContainer, kVan, kTruck };
 NLOHMANN_JSON_SERIALIZE_ENUM(CargoSpaceList,
                              {{CargoSpaceList::kInvalid, nullptr},
@@ -9,4 +10,4 @@ NLOHMANN_JSON_SERIALIZE_ENUM(CargoSpaceList,
                               {CargoSpaceList::kContainer, "container"},
                               {CargoSpaceList::kVan, "van"},
                               {CargoSpaceList::kTruck, "truck"}})
-}  // namespace gls
+}  // namespace gls::models

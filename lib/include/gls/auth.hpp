@@ -34,7 +34,10 @@ class Auth {
     return base_url;
   }
   Auth& Refresh();
-  ~Auth() { Logout(); }
+  ~Auth() {
+    Logout();
+  }
 };
+using Response = std::pair<nlohmann::json, std::int64_t>;
 
 }  // namespace gls

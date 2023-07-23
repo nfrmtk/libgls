@@ -5,7 +5,8 @@
 #include <gls/models/response_calculation.hpp>
 #include <gls/models/status_067.hpp>
 #include <unordered_map>
-#include <variant>
+#include <optional>
+
 namespace gls {
 using namespace std::literals;
 
@@ -14,12 +15,18 @@ class Calculation {
 
  public:
   Calculation() = delete;
-  explicit Calculation(const Auth& credentials) : credentials(credentials) {}
-  std::optional<nlohmann::json> Get(bool favorite, bool is_history,
-                                    bool is_recalculate, std::string ordering,
-                                    std::int64_t page, std::int64_t page_size,
-                                    std::int64_t project_id,
-                                    gls::models::Status067 status);
-  std::optional<nlohmann::json> Post(models::TCalculationCreate info);
+  explicit Calculation(const Auth& credentials)
+      : credentials(credentials) {
+  }
+  Response Get(std::optional<bool> favorite = std::nullopt,
+               std::optional<bool> is_history = std::nullopt,
+               std::optional<bool> is_recalculate = std::nullopt,
+               std::optional<std::string> ordering = std::nullopt,
+               std::optional<std::int64_t> page = std::nullopt,
+               std::optional<std::int64_t> page_size = std::nullopt,
+               std::optional<std::int64_t> project_id = std::nullopt,
+               std::optional<gls::models::Status067> status = std::nullopt);
+  Response Post(models::TCalculationCreate info);
+  std::int64_t Delete(std::int64_t id);
 };
 }  // namespace gls

@@ -42,7 +42,8 @@ Auth& Auth::Refresh() {
                             cpr::Header{headers}, cpr::Body{to_string(body)});
   check_if_failed(response);
   auto j = nlohmann::json::parse(std::move(response.text));
-  if (!j["result"].get<bool>()) return *this;
+  if (!j["result"].get<bool>())
+    return *this;
   credentials->access_token_expires =
       j["access_token_expires"].get<std::int64_t>();
   credentials->access_token = j["access_token"].get<std::string>();
