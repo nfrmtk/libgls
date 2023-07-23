@@ -43,24 +43,24 @@ struct CalculationFixture {
                                           .color = "#FF0000"}},
                              .sort = 1};
     gls::models::TCalculationCreate info = {
-      .project = this->pfix->getId(),
-      .input_data =
-          {
-              .cargo_spaces = {this->cfix->id},
-              .groups = {std::move(g)},
-              .user_sort = true,
-          },
-      .status = gls::models::Status067::kNew,
-      .external_api = true,
+        .project = this->pfix->getId(),
+        .input_data =
+            {
+                .cargo_spaces = {this->cfix->id},
+                .groups = {std::move(g)},
+                .user_sort = true,
+            },
+        .status = gls::models::Status067::kNew,
+        .external_api = true,
     };
     auto result = calc.Post(std::move(info));
     if (result.second / 100 != 2)
       throw std::logic_error("something is not right: " +
                              to_string(result.first));
-    else id = result.first["id"].get<std::int64_t>();
+    else
+      id = result.first["id"].get<std::int64_t>();
   }
   ~CalculationFixture() {
     calc.Delete(id);
-
   }
 };

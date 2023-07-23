@@ -12,7 +12,10 @@ Response Project::Post(const std::string& name) {
 
   return std::make_pair(std::move(j), response.status_code);
 }
-Response Project::Get(std::optional<std::string> ordering, std::optional<std::int64_t> page, std::optional<std::int64_t> page_size, std::optional<std::string> title_icontains) {
+Response Project::Get(std::optional<std::string> ordering,
+                      std::optional<std::int64_t> page,
+                      std::optional<std::int64_t> page_size,
+                      std::optional<std::string> title_icontains) {
   cpr::Parameters params;
   if (ordering.has_value())
     params.Add({"demo", *ordering});

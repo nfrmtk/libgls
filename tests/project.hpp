@@ -5,7 +5,7 @@ class ProjectFixture {
  public:
   gls::Project proj_;
   ProjectFixture() = delete;
-  ProjectFixture(gls::Project  main, const std::string& title)
+  ProjectFixture(gls::Project main, const std::string& title)
       : proj_(main),
         title(title) {
     if (auto p = proj_.Post(title); p.second / 100 != 2) {
@@ -15,12 +15,12 @@ class ProjectFixture {
     }
   }
   ~ProjectFixture() {
-    if (id) proj_.Delete(getId());
+    if (id)
+      proj_.Delete(getId());
   }
   std::int64_t getId() const noexcept {
     return id;
   }
-
 
  private:
   std::string title;
