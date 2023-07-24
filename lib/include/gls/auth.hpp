@@ -6,7 +6,6 @@
 #include <nlohmann/json.hpp>
 #include <utility>
 namespace gls {
-void check_if_failed(const cpr::Response& response);
 static cpr::Header headers = {{"Content-Type", "application/json"}};
 
 class Auth {

@@ -1,6 +1,8 @@
 #include <gls/auth.hpp>
 
 namespace gls {
+namespace {
+
 void check_if_failed(const cpr::Response& response) {
   if (response.status_code != 200) {
     throw std::runtime_error("request failure. Api responded with: " +
@@ -9,7 +11,7 @@ void check_if_failed(const cpr::Response& response) {
                              to_string(nlohmann::json::parse(response.text)));
   }
 }
-
+}
 Auth& Auth::Login() {
   auto body = to_string(nlohmann::json(email_password));
 
